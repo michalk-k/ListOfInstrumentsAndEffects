@@ -4,6 +4,8 @@ It generates output in a `markdown` compatible format.
 
 The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, which requires providing such statistics (though, it doesn't require `markdown` format)
 
+The repository is ReaPack complaint. Use [this link](https://raw.githubusercontent.com/michalk-k/ListOfInstrumentsAndEffects/main/index.xml) to import the repo to your collection of ReaPak repositories.
+
 ## Output example:
 An example of the raw output:
 ```
