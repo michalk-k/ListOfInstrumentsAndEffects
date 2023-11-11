@@ -94,13 +94,13 @@ end
 
 
 -- Display the lists
-local msg = "List of Used Instruments:\n"
+local msg = "**Instruments:**\n"
 msg = msg .. PrintTableMarkup(instrumentList)
 
-msg = msg .. "\nList of Used Effects:\n"
+msg = msg .. "\n**Effects:**\n"
 msg = msg .. PrintTableMarkup(effectList)
 
-msg = msg .. "\nList of offline/inactive plugins:\n"
+msg = msg .. "\n**Offline/inactive plugins:**\n"
 msg = msg .. PrintTableMarkup(offlineList)
 
 
