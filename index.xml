@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<index version="1" name="MXM Scripts">
+  <category name="Scripts">
+    <reapack name="mxm_List of Instruments and Effects.lua" type="script" desc="List of Instruments and Effects">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fnil\fcharset238 Arial;}{\f2\fnil\fcharset0 Courier New;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\fs22\lang5 This script lists all used Reaper plugins, grouping them into categories. It generates output in a markdown compatible format.\par
+The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, which requires providing such statistics (though, it doesn't require markdown format)\par
+\f1\lang1029 An example of the raw output:\f2\lang5\par
+\fs16 **Instruments:**\line |Plugin Name                |Quantity  |\line |---------------------------|----------|\line |VST3i: Wavetable (SocaLabs)|31        |\par
+**Effects:**\line |Plugin Name                                   |Quantity  |\line |----------------------------------------------|----------|\line |VST3: ValhallaSupermassive (Valhalla DSP, LLC)|11        |\line |JS: ReEQ - Parametric Graphic Equalizer       |18        |\line |VST: ReaComp (Cockos)                         |5         |\line |VST: ReaLimit (Cockos)                        |3         |\line |VST: OrilRiver (Denis Tihanov)                |1         |\line |VST: ReaDelay (Cockos)                        |2         |\par
+**Offline/inactive plugins:**\line |Plugin Name                      |Quantity  |\line |---------------------------------|----------|\line |VST3i: Stochas (Surge Synth Team)|4         |\line |VST: ReaLimit (Cockos)           |1         |\line |VST: ReaComp (Cockos)            |1         |\par
+}
+
+]]></description>
+      </metadata>
+      <version name="1.0" author="Michal MaXyM Bartak" time="2023-11-11T21:01:00+01:00">
+        <source main="main">https://raw.githubusercontent.com/michalk-k/ListOfInstrumentsAndEffects/ReaPack/scripts/mxm/mxm_List%20of%20Instruments%20and%20Effects.lua</source>
+      </version>
+    </reapack>
+  </category>
+  <metadata>
+    <description></description>
+  </metadata>
+</index>
+

@@ -1,7 +1,11 @@
-
--- Reaper Plugin: List of plugins found in current project with number of their instances, grouped into Intruments, Effects and offline/muted ones
--- Version: 1.0
--- Author: Michal Bartak
+--[[
+ * ReaScript Name: List of Instruments and Effects
+ * Author: Michal MaXyM Bartak
+ * Licence: GPL v3
+ * REAPER: 7.0
+ * Extensions: None
+ * Version: 1.0
+--]]
 
 
 -- RETURNS TRUE IF FX at fx_id is an instrument
