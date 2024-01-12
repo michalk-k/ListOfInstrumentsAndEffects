@@ -1,76 +1,20 @@
 # ListOfInstrumentsAndEffects
-This script lists all used Reaper plugins, grouping them into categories.
-It generates output in a `markdown` compatible format.
+This is a Lua script, which lists all Reaper plugins used in an active project, grouping them into categories.
+The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, which requires providing technical details of the production.
 
-The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, which requires providing such statistics (though, it doesn't require `markdown` format)
+![Screenshot](images/List_of_Instruments_and_Effects.png)
 
+When running the script, it immediately shows results in the opened window.
+Further, it provides a few buttons allowing copying the result to the clipboard. 
+Currently available options are:
+* plain text - it's the text shown in the preview window
+* markdown - results are formatted into tables using markdown syntax
+* BB plain - results use some BBcode formatting, like bold
+* BB [code] - results are enclosed into `[CODE] [/CODE]` BBcode tags, to force fixed-width fonts
+
+Note, that every press of Copy to clipboard button generates the report again, including a refresh of displayed content
+Normally the report shown in the script window is plain text, regardless format selected by pressing the export button. With the `debug` checkbox checked, the report shown in the window will be the same as the content copied into the clipboard.
+
+# ReaPack
 The repository is ReaPack compliant. Use [this link](https://raw.githubusercontent.com/michalk-k/ListOfInstrumentsAndEffects/main/index.xml) to import the repo to your collection of ReaPack repositories.
 
-## Output example:
-An example of the raw output:
-```
-**Instruments:**
-|Plugin Name                |Quantity  |
-|---------------------------|----------|
-|VST3i: Wavetable (SocaLabs)|31        |
-
-**Effects:**
-|Plugin Name                                   |Quantity  |
-|----------------------------------------------|----------|
-|JS: ReEQ - Parametric Graphic Equalizer       |19        |
-|VST3: ValhallaSupermassive (Valhalla DSP, LLC)|11        |
-|VST: FerricTDSmkII (Variety Of Sound)         |1         |
-|VST: OrilRiver (Denis Tihanov)                |1         |
-|VST: ReaComp (Cockos)                         |5         |
-|VST: ReaDelay (Cockos)                        |2         |
-|VST: ReaLimit (Cockos)                        |4         |
-
-**Monitoring plugins:**
-|Plugin Name                                    |Quantity  |
-|-----------------------------------------------|----------|
-|JS: Goniometer                                 |1         |
-|JS: Oscilloscope Meter (Cockos)                |1         |
-|JS: ReSpectrum                                 |1         |
-|VST3: Youlean Loudness Meter 2 (Youlean) (10ch)|1         |
-|VST: SPAN (Voxengo) (8ch)                      |1         |
-
-**Offline/inactive plugins:**
-|Plugin Name                      |Quantity  |
-|---------------------------------|----------|
-|VST3i: Stochas (Surge Synth Team)|4         |
-|VST: ReaComp (Cockos)            |1         |
-|VST: ReaLimit (Cockos)           |1         |
-```
-The output is rendered by markdown parsers into this:
-
-**Instruments:**
-|Plugin Name                |Quantity  |
-|---------------------------|----------|
-|VST3i: Wavetable (SocaLabs)|31        |
-
-**Effects:**
-|Plugin Name                                   |Quantity  |
-|----------------------------------------------|----------|
-|JS: ReEQ - Parametric Graphic Equalizer       |19        |
-|VST3: ValhallaSupermassive (Valhalla DSP, LLC)|11        |
-|VST: FerricTDSmkII (Variety Of Sound)         |1         |
-|VST: OrilRiver (Denis Tihanov)                |1         |
-|VST: ReaComp (Cockos)                         |5         |
-|VST: ReaDelay (Cockos)                        |2         |
-|VST: ReaLimit (Cockos)                        |4         |
-
-**Monitoring plugins:**
-|Plugin Name                                    |Quantity  |
-|-----------------------------------------------|----------|
-|JS: Goniometer                                 |1         |
-|JS: Oscilloscope Meter (Cockos)                |1         |
-|JS: ReSpectrum                                 |1         |
-|VST3: Youlean Loudness Meter 2 (Youlean) (10ch)|1         |
-|VST: SPAN (Voxengo) (8ch)                      |1         |
-
-**Offline/inactive plugins:**
-|Plugin Name                      |Quantity  |
-|---------------------------------|----------|
-|VST3i: Stochas (Surge Synth Team)|4         |
-|VST: ReaComp (Cockos)            |1         |
-|VST: ReaLimit (Cockos)           |1         |
