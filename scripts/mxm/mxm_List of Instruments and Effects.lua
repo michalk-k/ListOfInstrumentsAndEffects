@@ -4,14 +4,11 @@
 -- @licence GPL v3
 -- @about
 --   # About
---   The script generates list of plugins used in the project
--- 
+--   This is a Lua script, which lists all Reaper plugins used in an active project, grouping them into categories.
+--
 --   It's written and tested in Reaper7.x. Might work in previous versions too.
--- 
---  * REAPER: 7.0
---  * Extensions: Lokasenna_GUI, lib_path_v2
 -- @changelog
---   v2.0 Added GUI with export to plain text and markdown
+--   v2.0 Added GUI with export to various formats
 --   v1.0 Initial version
 
 
@@ -26,7 +23,7 @@ loadfile(lib_path .. "Core.lua")()
 GUI.req("Classes/Class - Textbox.lua")()
 GUI.req("Classes/Class - TextEditor.lua")()
 GUI.req("Classes/Class - Button.lua")()
-GUI.req("Classes/Class - Frame.lua")() 
+GUI.req("Classes/Class - Frame.lua")()
 GUI.req("Classes/Class - Label.lua")()
 GUI.req("Classes/Class - Options.lua")()
 -- If any of the requested libraries weren't found, abort the script.
@@ -94,17 +91,17 @@ local function PrintTableMarkup(table)
       maxnamewidth = math.max(maxnamewidth, string.len(instrument))
       found = true
   end
-  
+
   if not found then
     return "N/A\n"
   end
-    
+
   msg = msg .. "|" .. PadColumn("Plugin Name", maxnamewidth)
   msg = msg .. "|" .. PadColumn("Instances", quantitywidth) .. "|\n"
   msg = msg .. "|" .. PadColumn( string.rep("-", maxnamewidth), maxnamewidth)
   msg = msg .. "|" .. PadColumn( string.rep("-", quantitywidth -1) .. ":", quantitywidth) .. "|\n"
 
-  for instrument, quantity in spairs(table) do
+  for instrument, quantity in spairs(table, function(t,a,b) return a < b end) do
 
       msg = msg .. "|" .. PadColumn(instrument, maxnamewidth)
       msg = msg .. "|" .. PadColumn(quantity, quantitywidth) .. "|\n"
@@ -116,12 +113,12 @@ end
 local function PrintTable(intable)
   local msg = ""
   local found = false
-  
-  for instrument, quantity in pairs(intable) do
+
+  for instrument, quantity in spairs(intable, function(t,a,b) return a < b end) do
       msg = msg .. PadColumn(quantity .. "x ", 5) .. instrument .. "\n"
       found = true
   end
-  
+
   if found then
     return msg
   else
@@ -175,7 +172,7 @@ local function GenerateData()
   -- Iterate through all tracks in the project
   for i = 0, reaper.CountTracks(project) - 1 do
       local track = reaper.GetTrack(project, i)
-  
+
       -- Iterate through all FX on the track
       for fxIndex = 0, reaper.TrackFX_GetCount(track) - 1 do
            AssignToCategory(track, fxIndex)
@@ -184,12 +181,12 @@ local function GenerateData()
 
   -- Get master track plugins
   local numMasterFX = reaper.TrackFX_GetCount(reaper.GetMasterTrack())
-  
+
    -- Iterate through all FX on master track
   for fxIndex = 0, numMasterFX - 1 do
       AssignToCategory(reaper.GetMasterTrack(), fxIndex)
   end
-  
+
   -- Get monitoring FXs
   local numinputFX = reaper.TrackFX_GetRecCount(reaper.GetMasterTrack())
   for fxIndex = 0, numinputFX - 1 do
@@ -203,16 +200,16 @@ local function GetDataMarkdown()
   -- Display the lists
   local msg = "**Instruments:**\n"
   msg = msg .. PrintTableMarkup(instrumentList)
-  
+
   msg = msg .. "\n**Effects:**\n"
   msg = msg .. PrintTableMarkup(effectList)
-  
+
   msg = msg .. "\n**Monitoring plugins:**\n"
   msg = msg .. PrintTableMarkup(monitorinList)
-  
+
   msg = msg .. "\n**Offline/inactive plugins:**\n"
   msg = msg .. PrintTableMarkup(offlineList)
-  
+
   return msg
 end
 
@@ -221,68 +218,96 @@ local function GetDataPlain()
   -- Display the lists
   local msg = "Instruments:\n"
   msg = msg .. PrintTable(instrumentList)
-  
+
   msg = msg .. "\nEffects:\n"
   msg = msg .. PrintTable(effectList)
-  
+
   msg = msg .. "\nMonitoring plugins:\n"
   msg = msg .. PrintTable(monitorinList)
-  
+
   msg = msg .. "\nOffline/inactive plugins:\n"
   msg = msg .. PrintTable(offlineList)
-  
+
   return msg
 end
 
-local function GetDataBB()
+local function GetDataBBplain()
   GenerateData();
   -- Display the lists
   local msg = "[b]Instruments:[/b]\n"
   msg = msg .. PrintTable(instrumentList)
-  
+
   msg = msg .. "\n[b]Effects:[/b]\n"
   msg = msg .. PrintTable(effectList)
-  
+
   msg = msg .. "\n[b]Monitoring plugins:[/b]\n"
   msg = msg .. PrintTable(monitorinList)
-  
+
   msg = msg .. "\n[b]Offline/inactive plugins:[/b]\n"
   msg = msg .. PrintTable(offlineList)
-  
+
+  return msg
+end
+
+local function GetDataBBcode()
+  GenerateData();
+  -- Display the lists
+  local msg = "[CODE]\n"
+  msg = msg .. "Instruments:\n"
+  msg = msg .. PrintTable(instrumentList)
+
+  msg = msg .. "\nEffects:\n"
+  msg = msg .. PrintTable(effectList)
+
+  msg = msg .. "\nMonitoring plugins:\n"
+  msg = msg .. PrintTable(monitorinList)
+
+  msg = msg .. "\nOffline/inactive plugins:\n"
+  msg = msg .. PrintTable(offlineList)
+  msg = msg .. "[/CODE]"
+
   return msg
 end
 
 
-function get_report(opt, forceout) 
+function get_report(opt, forceout)
   local txt
   local arr
-  
-  
+
+
   if opt == "plaintext" then
       txt = GetDataPlain()
   elseif opt == "markdown" then
       txt = GetDataMarkdown()
-  elseif opt == "bb" then
-      txt = GetDataBB()
+  elseif opt == "bbplain" then
+      txt = GetDataBBplain()
+  elseif opt == "bbcode" then
+      txt = GetDataBBcode()
   end
 
   reaper.CF_SetClipboard(txt);
 
   if GUI.Val("Checklist1") or forceout then
     GUI.Val("TextEditor1", txt);
+  else
+    GUI.Val("TextEditor1", GetDataPlain());
   end
 end
 
-function get_report_plaintext() 
-  get_report("plaintxt")
+function get_report_plaintext()
+  get_report("plaintext")
 end
 
-function get_report_markdown() 
+function get_report_markdown()
   get_report("markdown")
 end
 
-function get_report_bb() 
-  get_report("bb")
+function get_report_bbplain()
+  get_report("bbplain")
+end
+
+function get_report_bbcode()
+  get_report("bbcode")
 end
 
 
@@ -295,7 +320,7 @@ GUI.New("Label1", "Label", {
     color = "txt",
     bg = "wnd_bg",
     shadow = false
-})      
+})
 
 GUI.New("Frame1", "Frame", {
     z = 12,
@@ -314,7 +339,7 @@ GUI.New("Frame1", "Frame", {
     pad = 4,
     font = 4,
     col_txt = ""
-})  
+})
 
 GUI.New("Button1", "Button", {
     z = 11,
@@ -341,10 +366,24 @@ GUI.New("Button2", "Button", {
     col_fill = "elm_frame",
     func = get_report_markdown
     })
-    
+
 GUI.New("Button3", "Button", {
     z = 11,
     x = 214,
+    y = 70,
+    w = 70,
+    h = 24,
+    caption = "BB Plain",
+    font = 3,
+    col_txt = "txt",
+    col_fill = "elm_frame",
+    func = get_report_bbplain
+
+    })
+
+GUI.New("Button4", "Button", {
+    z = 11,
+    x = 303,
     y = 70,
     w = 70,
     h = 24,
@@ -352,7 +391,7 @@ GUI.New("Button3", "Button", {
     font = 3,
     col_txt = "txt",
     col_fill = "elm_frame",
-    func = get_report_bb
+    func = get_report_bbcode
     })
 
 GUI.New("TextEditor1", "TextEditor", {
@@ -372,7 +411,7 @@ GUI.New("TextEditor1", "TextEditor", {
     pad = 4,
     undo_limit = 20
 })
- 
+
 GUI.New("Checklist1", "Checklist", {
     z = 11,
     x = 380,
