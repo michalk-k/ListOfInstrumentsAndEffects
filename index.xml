@@ -13,6 +13,7 @@ The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, wh
 ]]></description>
       </metadata>
       <version name="1.0" author="Michal MaXyM Bartak" time="2023-11-11T21:01:00+01:00">
+        <changelog><![CDATA[Added GUI and options to copy result to clipboard in various formats]]></changelog>
         <source main="main">https://raw.githubusercontent.com/michalk-k/ListOfInstrumentsAndEffects/main/scripts/mxm/mxm_List%20of%20Instruments%20and%20Effects.lua</source>
       </version>
       <version name="2.0" author="Michal MaXyM Bartak" time="2024-01-12T20:00:00+01:00">
