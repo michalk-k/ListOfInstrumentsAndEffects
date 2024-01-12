@@ -26,11 +26,14 @@ loadfile(lib_path .. "Core.lua")()
 GUI.req("Classes/Class - Textbox.lua")()
 GUI.req("Classes/Class - TextEditor.lua")()
 GUI.req("Classes/Class - Button.lua")()
+GUI.req("Classes/Class - Frame.lua")() 
+GUI.req("Classes/Class - Label.lua")()
+GUI.req("Classes/Class - Options.lua")()
 -- If any of the requested libraries weren't found, abort the script.
 if missing_lib then return 0 end
 
 
-GUI.name = "New script GUI"
+GUI.name = "List of Instruments and Effects"
 GUI.x, GUI.y, GUI.w, GUI.h = 0, 0, 512, 480
 GUI.anchor, GUI.corner = "mouse", "C"
 
@@ -85,11 +88,17 @@ local function PrintTableMarkup(table)
   local msg = ""
   local maxnamewidth = 0
   local quantitywidth = 10
+  local found = false
 
   for instrument, quantity in pairs(table) do
       maxnamewidth = math.max(maxnamewidth, string.len(instrument))
+      found = true
   end
-
+  
+  if not found then
+    return "N/A\n"
+  end
+    
   msg = msg .. "|" .. PadColumn("Plugin Name", maxnamewidth)
   msg = msg .. "|" .. PadColumn("Instances", quantitywidth) .. "|\n"
   msg = msg .. "|" .. PadColumn( string.rep("-", maxnamewidth), maxnamewidth)
@@ -189,7 +198,7 @@ local function GenerateData()
 
 end
 
-local function GetDataMarkup()
+local function GetDataMarkdown()
   GenerateData();
   -- Display the lists
   local msg = "**Instruments:**\n"
@@ -225,43 +234,125 @@ local function GetDataPlain()
   return msg
 end
 
-
-function get_a() 
-  reaper.ShowConsoleMsg(GetDataPlain());
-  reaper.CF_SetClipboard(GetDataPlain());
-  GUI.Val("TextEditor1", GetDataPlain());
+local function GetDataBB()
+  GenerateData();
+  -- Display the lists
+  local msg = "[b]Instruments:[/b]\n"
+  msg = msg .. PrintTable(instrumentList)
+  
+  msg = msg .. "\n[b]Effects:[/b]\n"
+  msg = msg .. PrintTable(effectList)
+  
+  msg = msg .. "\n[b]Monitoring plugins:[/b]\n"
+  msg = msg .. PrintTable(monitorinList)
+  
+  msg = msg .. "\n[b]Offline/inactive plugins:[/b]\n"
+  msg = msg .. PrintTable(offlineList)
+  
+  return msg
 end
 
-function get_b() 
-   reaper.ShowConsoleMsg(GetDataMarkup());
-   reaper.CF_SetClipboard(GetDataMarkup());
-   GUI.Val("TextEditor1", GetDataMarkup());
+
+function get_report(opt, forceout) 
+  local txt
+  local arr
+  
+  
+  if opt == "plaintext" then
+      txt = GetDataPlain()
+  elseif opt == "markdown" then
+      txt = GetDataMarkdown()
+  elseif opt == "bb" then
+      txt = GetDataBB()
+  end
+
+  reaper.CF_SetClipboard(txt);
+
+  if GUI.Val("Checklist1") or forceout then
+    GUI.Val("TextEditor1", txt);
+  end
 end
+
+function get_report_plaintext() 
+  get_report("plaintxt")
+end
+
+function get_report_markdown() 
+  get_report("markdown")
+end
+
+function get_report_bb() 
+  get_report("bb")
+end
+
+
+GUI.New("Label1", "Label", {
+    z = 11,
+    x = 34,
+    y = 48,
+    caption = "Copy to Clipboard",
+    font = 4,
+    color = "txt",
+    bg = "wnd_bg",
+    shadow = false
+})      
+
+GUI.New("Frame1", "Frame", {
+    z = 12,
+    x = 24,
+    y = 55,
+    w = 460,
+    h = 53,
+    shadow = false,
+    fill = false,
+    color = "elm_frame",
+    bg = "wnd_bg",
+    round = 4,
+    text = "",
+    txt_indent = 0,
+    txt_pad = 0,
+    pad = 4,
+    font = 4,
+    col_txt = ""
+})  
 
 GUI.New("Button1", "Button", {
     z = 11,
-    x = 24,
-    y = 64,
+    x = 34,
+    y = 70,
     w = 70,
     h = 24,
     caption = "Plain Text",
     font = 3,
     col_txt = "txt",
     col_fill = "elm_frame",
-    func = get_a
+    func = get_report_plaintext
 })
 
 GUI.New("Button2", "Button", {
     z = 11,
     x = 125,
-    y = 64,
+    y = 70,
     w = 70,
     h = 24,
     caption = "Markdown",
     font = 3,
     col_txt = "txt",
     col_fill = "elm_frame",
-    func = get_b
+    func = get_report_markdown
+    })
+    
+GUI.New("Button3", "Button", {
+    z = 11,
+    x = 214,
+    y = 70,
+    w = 70,
+    h = 24,
+    caption = "BB Code",
+    font = 3,
+    col_txt = "txt",
+    col_fill = "elm_frame",
+    func = get_report_bb
     })
 
 GUI.New("TextEditor1", "TextEditor", {
@@ -281,7 +372,28 @@ GUI.New("TextEditor1", "TextEditor", {
     pad = 4,
     undo_limit = 20
 })
-
+ 
+GUI.New("Checklist1", "Checklist", {
+    z = 11,
+    x = 380,
+    y = 68,
+    w = 96,
+    h = 36,
+    caption = "",
+    optarray = {"Debug"},
+    dir = "v",
+    pad = 4,
+    font_a = 2,
+    font_b = 3,
+    col_txt = "txt",
+    col_fill = "elm_fill",
+    bg = "wnd_bg",
+    shadow = true,
+    swap = true,
+    opt_size = 20,
+    frame = false
+})
 
 GUI.Init()
 GUI.Main()
+get_report("plaintext", true)
